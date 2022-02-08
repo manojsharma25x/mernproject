@@ -3,6 +3,7 @@ const router = express.Router();
 require('../db/conn');
 const User = require('../model/userSchema');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -51,6 +52,9 @@ router.post('/login', async (req, res) => {
         if (userLogin) {
             // console.log(userLogin);
             const isMatch = await bcrypt.compare(password, userLogin.password);
+
+            const token = await userLogin.generateAutoToken();
+            console.log(token);
             if (!isMatch) {
                 res.status(400).json({ error: "Invalid credential" })
             } else {
