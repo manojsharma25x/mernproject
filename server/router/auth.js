@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 require('../db/conn');
 const User = require('../model/userSchema');
+const bcrypt = require('bcryptjs');
 
 
 
@@ -21,15 +22,15 @@ router.post('/register', async (req, res) => {
         const userExist = await User.findOne({ email });
         if (userExist) {
             return res.status(422).json({ error: "user already exist" });
-        }else if (password != confirmpassword){
+        } else if (password != confirmpassword) {
             return res.status(422).json({ error: "password not matched" });
-        }else{
+        } else {
             const user = new User({ name, email, phone, work, password, confirmpassword });
             // pasword hashing
             await user.save();
             res.status(201).json("succefully registered");
         }
-        
+
 
     } catch {
         console.log(err)
@@ -38,24 +39,29 @@ router.post('/register', async (req, res) => {
 
 // login
 router.post('/login', async (req, res) => {
-// console.log(req.body);
-// res.json("awsome")
+    // console.log(req.body);
+    // res.json("awsome")
 
-    try{
-        const {email,password } = req.body;
+    try {
+        const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ error: "plz fill !" });
         }
-        const userLogin = await User.findOne({email});
-        console.log(userLogin);
-        if(!userLogin){
-            res.status(400).json({error : "error"})
-        }
-        else{
-            res.json({message : "login sccs"});
+        const userLogin = await User.findOne({ email });
+        if (userLogin) {
+            // console.log(userLogin);
+            const isMatch = await bcrypt.compare(password, userLogin.password);
+            if (!isMatch) {
+                res.status(400).json({ error: "Invalid credential" })
+            } else {
+                res.json({ message: "login sccs" });
+            }
+        } else {
+            res.status(400).json({ error: "Invalid credential" })
         }
 
-    }catch (error) {
+
+    } catch (error) {
         console.log(error);
     }
 });
