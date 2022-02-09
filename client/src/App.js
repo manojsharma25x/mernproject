@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import ErrorPage from "./components/ErrorPage";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
@@ -75,6 +76,17 @@ const App = () => {
             // key="about"
             element={
               <Home
+              // setProgress={setProgress}
+              // apiKey={apiKey}
+              // pageSize={page}
+              // country="in"
+              // category="business"
+              />
+            }
+          ></Route>
+          <Route 
+            element={
+              <ErrorPage
               // setProgress={setProgress}
               // apiKey={apiKey}
               // pageSize={page}
